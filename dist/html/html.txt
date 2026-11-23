@@ -1,3 +1,3 @@
-All you need to do it add the container where ever you want the feed to present, using the *same* name as the one chosen in the JavaScript file under loadfeed()
+All you need to do is add the container where ever you want the feed to present, using the *same* name as the one chosen in the JavaScript file under loadfeed()
 
 <div id="entries"></div>

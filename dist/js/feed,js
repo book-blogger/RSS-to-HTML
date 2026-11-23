@@ -47,7 +47,7 @@ async function loadFeed(url, containerId) {
                 : "";
 
             const post = document.createElement("article");
-            post.className = containerId === "post";
+            post.className = "post";
 
             const heading = document.createElement("h3");
             const anchor = document.createElement("a");

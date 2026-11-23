@@ -47,9 +47,7 @@ async function loadFeed(url, containerId) {
                 : "";
 
             const post = document.createElement("article");
-            post.className = containerId === "feed"
-            ? "post microblog-post"
-            : "post";
+            post.className = containerId === "post";
 
             const heading = document.createElement("h3");
             const anchor = document.createElement("a");

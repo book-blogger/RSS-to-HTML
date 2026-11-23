@@ -1,0 +1,97 @@
+
+async function loadFeed(url, containerId) {
+    const container = document.getElementById(containerId);
+
+    if (!container) return;
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("Could not load RSS feed. :(");
+        }
+
+        const xmlText = await response.text();
+
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(xmlText, "application/xml");
+
+        // Check for XML parsing errors
+        if (xml.querySelector("parsererror")) {
+            throw new Error("Invalid XML feed.");
+        }
+
+        const items = xml.querySelectorAll("item");
+
+        container.innerHTML = "";
+
+        items.forEach(item => {
+            const title =
+                item.querySelector("title")?.textContent || "Untitled";
+
+            const link =
+                item.querySelector("link")?.textContent || "#";
+
+            const description =
+                item.querySelector("description")?.textContent || "";
+
+            const pubDate =
+                item.querySelector("pubDate")?.textContent || "";
+
+            const date = pubDate
+                ? new Date(pubDate).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                })
+                : "";
+
+            const post = document.createElement("article");
+            post.className = containerId === "feed"
+            ? "post microblog-post"
+            : "post";
+
+            const heading = document.createElement("h3");
+            const anchor = document.createElement("a");
+
+            anchor.href = link;
+            anchor.textContent = title;
+
+            heading.appendChild(anchor);
+
+            const dateElement = document.createElement("div");
+            dateElement.className = "date";
+            dateElement.textContent = date;
+
+            const descriptionElement = document.createElement("div");
+            descriptionElement.className = "description";
+
+            const list = document.createElement("ul");
+
+            description.split(/\r?\n/).forEach(line => {
+            line = line.trim();
+
+            if (line) {
+                const li = document.createElement("li");
+                li.textContent = line;
+                list.appendChild(li);
+            }
+        });
+
+descriptionElement.appendChild(list);
+
+            post.appendChild(heading);
+            post.appendChild(dateElement);
+            post.appendChild(descriptionElement);
+
+            container.appendChild(post);
+        });
+
+    } catch (error) {
+        console.error(error);
+        container.innerHTML = "<p>Unable to load feed.</p>";
+    }
+}
+
+// Load both feeds, feed name refers to the container ID
+loadFeed("feed.link", "feed_name");
